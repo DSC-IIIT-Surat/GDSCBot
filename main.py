@@ -14,11 +14,22 @@ import discord
 import requests
 from dotenv import load_dotenv
 
+# Environment Variable Settings
 load_dotenv()
 my_secret = os.getenv('TOKEN')
 AMMOUNCEMENT_PASSWORD = os.getenv('AMMOUNCEMENT_PASSWORD')
+ANNOUNCEMENT_CHANNEL = os.getenv('ANNOUNCEMENT_CHANNEL')
 client = discord.Client()
 
+# For letting the administrator know that the bot is running
+
+
+@client.event
+async def on_ready():
+    print('Bot has logged in as {0.user}'.format(client))
+
+
+# Colors array for randomly selecting a color for embeds
 colors = [
     discord.Color.teal(),
     discord.Color.dark_teal(),
@@ -44,6 +55,8 @@ colors = [
     discord.Color.greyple(),
 ]
 
+# Function to fetch a random quote
+
 
 def get_quote():
     response = requests.get("https://www.zenquotes.io/api/random")
@@ -52,11 +65,7 @@ def get_quote():
     return quote
 
 
-@client.event
-async def on_ready():
-    print('Bot has logged in as {0.user}'.format(client))
-
-
+# Reply to the messages
 @client.event
 async def on_message(message):
     '''
@@ -79,7 +88,7 @@ async def on_message(message):
         await message.reply(get_quote())
 
     # Starts with $about
-    elif message.content.startswith('$about'):
+    elif message.content.lower().startswith('$about'):
         randomIndex = random.randint(
             0, len(colors) - 1)    # get a random color
         about_msg = discord.Embed(title="This bot is for managing the Discord server of Google Developer Students Club, Indian Institute of Information technoology, Surat.",
@@ -95,11 +104,11 @@ async def on_message(message):
         await message.reply(embed=about_msg)
 
     # Test command
-    elif message.content.startswith('$hello'):
+    elif message.content.lower().startswith('$hello'):
         await message.reply(f'Hi {message.author.mention}!\n> Use $help to see a list of commands')
 
     # help command
-    elif message.content.startswith('$help'):
+    elif message.content.lower().startswith('$help'):
         helpType = message.content.split(' ')[-1]
         if helpType == None:
             await message.reply(f'List of commands:\n> $quote : get a random quote. \n> $motivate : get a random quote\n> $hello : A test command for interaction\n> $ping : status message to check if the bot is working\n> $ticket : appoint a mod to help someone based on the tech stack\n> $post : post a new announcement in announcement channel')
@@ -123,11 +132,11 @@ async def on_message(message):
             await message.reply(embed=about_msg)
 
     # Bot status test
-    elif message.content.startswith('$ping'):
+    elif message.content.lower().startswith('$ping'):
         await message.reply('Pong! I am alive.')
 
     # Create a new support  ticket
-    elif message.content.startswith('$ticket'):
+    elif message.content.lower().startswith('$ticket'):
         techStack = message.content.split()[-1]
         if (techStack == 'python'):    # Web
             await message.reply(
@@ -142,7 +151,7 @@ async def on_message(message):
     AUTHORIZED_MODS = 'post {ANNOUNCEMENT_PASSWORD}'
     if message.content.startswith(AUTHORIZED_MODS):
         # channel ID of announcement channel
-        channel = client.get_channel(827973162306240546)
+        channel = client.get_channel(ANNOUNCEMENT_CHANNEL)
         randomIndex = random.randint(
             0, len(colors) - 1)    # get a random color
         l_msg = discord.Embed(  # create embed object
