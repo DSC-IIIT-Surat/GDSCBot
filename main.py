@@ -2,9 +2,16 @@
 # Path: main.py
 # *-* coding: utf-8 *-*
 # Author: @AvanishCodes
+# Email: avanishcodes@gmail.com
 # Date: 2021-27-08
 # Version: 0.1.0
 # Description: A discord bot for Google Developer Students Club, Indian Institute of Information Technology, Surat for managing the Discord server.
+
+'''
+    @Contributors:
+        - @AvanishCodes
+        - @prakhar728
+'''
 
 # Libraries
 import os
@@ -20,8 +27,9 @@ from dotenv import load_dotenv
 # Environment Variable Settings
 load_dotenv()
 my_secret = os.getenv('TOKEN')
-AMMOUNCEMENT_PASSWORD = os.getenv('AMMOUNCEMENT_PASSWORD')
+ANNOUNCEMENT_PASSWORD = os.getenv('ANNOUNCEMENT_PASSWORD')
 ANNOUNCEMENT_CHANNEL = os.getenv('ANNOUNCEMENT_CHANNEL')
+AUTHORIZED_MODS = f'post {ANNOUNCEMENT_PASSWORD}'
 client = discord.Client()
 
 # For letting the administrator know that the bot is running
@@ -69,7 +77,6 @@ async def on_message(message):
 
     # Starts with $about
     elif message.content.lower().startswith('$about'):
-
         await message.reply(embed=get_about())
 
     # Test command
@@ -105,7 +112,6 @@ async def on_message(message):
             )
 
     # Post a new announcement
-    AUTHORIZED_MODS = 'post {ANNOUNCEMENT_PASSWORD}'
     if message.content.startswith(AUTHORIZED_MODS):
         # channel ID of announcement channel
         channel = client.get_channel(ANNOUNCEMENT_CHANNEL)
@@ -116,7 +122,8 @@ async def on_message(message):
             description=str('\n'.join(message.content.split('\n')[2:])),
             colour=colors[randomIndex])
         await channel.send(embed=l_msg)
-
+    
+    # Format of a message in Discord server is: https://discord.com/channels/<server-id>/,channel-id>/<message-id>
 
 # Driver Code
 def main():
