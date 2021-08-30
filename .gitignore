@@ -1,3 +1,4 @@
 gdsc_bot_env/
 .env
 __pycache__/
+.replit
