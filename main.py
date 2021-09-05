@@ -8,6 +8,7 @@
 # Description: A discord bot for Google Developer Students Club, Indian Institute of Information Technology, Surat for managing the Discord server.
 
 '''
+    GDSC Bot to be used for Google Developers Club, Indian Institute of Information Technology, Surat.
     @Contributors:
         - @AvanishCodes
         - @prakhar728
@@ -32,11 +33,13 @@ ANNOUNCEMENT_CHANNEL = os.getenv('ANNOUNCEMENT_CHANNEL')
 AUTHORIZED_MODS = f'post {ANNOUNCEMENT_PASSWORD}'
 client = discord.Client()
 
-# For letting the administrator know that the bot is running
-
 
 @client.event
-async def on_ready():
+async def on_ready() -> None:
+    '''
+        Called when the bot is ready to start.
+        Notifies the administrator that the bot is running.
+    '''
     print('Bot has logged in as {0.user}'.format(client))
 
 
@@ -122,11 +125,18 @@ async def on_message(message):
             description=str('\n'.join(message.content.split('\n')[2:])),
             colour=colors[randomIndex])
         await channel.send(embed=l_msg)
-    
+
     # Format of a message in Discord server is: https://discord.com/channels/<server-id>/,channel-id>/<message-id>
 
-# Driver Code
+'''
+    Run the bot
+'''
+
+
 def main():
+    '''
+        Driver code for the bot.
+    '''
     client.run(my_secret)
 
 
