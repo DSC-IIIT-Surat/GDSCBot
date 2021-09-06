@@ -63,7 +63,7 @@ async def on_message(message):
 
     # Random quote from the list
     elif message.content.startswith('$motivate'):
-        await message.reply(get_quote())
+        await message.reply(embed=get_quote())
 
     # Random joke from the list
     elif message.content.startswith('$joke'):
