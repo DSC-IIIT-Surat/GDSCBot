@@ -19,6 +19,10 @@ import os
 import json
 import random
 import discord
+import discord.ext
+from discord.utils import get
+from discord.ext import commands, tasks
+from discord.ext.commands import has_permissions,  CheckFailure, check
 from colors import colors
 from jokes import get_joke
 from about import get_about
@@ -31,7 +35,9 @@ my_secret = os.getenv('TOKEN')
 ANNOUNCEMENT_PASSWORD = os.getenv('ANNOUNCEMENT_PASSWORD')
 ANNOUNCEMENT_CHANNEL = os.getenv('ANNOUNCEMENT_CHANNEL')
 AUTHORIZED_MODS = f'post {ANNOUNCEMENT_PASSWORD}'
+
 client = discord.Client()
+client = commands.Bot(command_prefix='$')  # put your own prefix here
 
 
 @client.event
@@ -42,6 +48,36 @@ async def on_ready() -> None:
     '''
     print('Bot has logged in as {0.user}'.format(client))
 
+
+
+@client.command(name='ping')
+async def ping(message):
+    # simple command so that when you type "!ping" the bot will respond with "pong!"
+    await message.reply("Pong! I am online, use **$help** for help.")
+
+@client.command(name='about')
+async def ping(message):
+    # simple command so that when you type "!ping" the bot will respond with "pong!"
+    await message.reply(embed=get_about())
+
+@client.command(name='hello')
+async def ping(message):
+    # simple command so that when you type "!ping" the bot will respond with "pong!"
+    await message.reply(f'Hi {message.author.mention}!\n> Use **$help** to see a list of commands')
+
+'''
+@client.command(name='help')
+async def help(message):
+    helpType = message.content.split(' ')[-1]
+    if helpType == None:
+        await message.reply(f'List of commands:\n> $quote : get a random quote. \n> $motivate : get a random quote\n> $hello : A test command for interaction\n> $ping : status message to check if the bot is working\n> $ticket : appoint a mod to help someone based on the tech stack\n> $post : post a new announcement in announcement channel')
+    elif helpType == 'ticket':
+        await message.reply(f'To appoint a mod, use $ticket <tech stack>')
+    elif helpType == 'ping':
+        await message.reply(f'To check if the bot is working, use $ping')
+    elif helpType == 'about':
+        await message.reply(embed=get_about())
+'''
 
 # Reply to the messages
 @client.event
@@ -78,13 +114,6 @@ async def on_message(message):
             jokeType = 'programming'
         await message.reply(embed=get_joke(jokeType=jokeType, number=number_of_jokes))
 
-    # Starts with $about
-    elif message.content.lower().startswith('$about'):
-        await message.reply(embed=get_about())
-
-    # Test command
-    elif message.content.lower().startswith('$hello'):
-        await message.reply(f'Hi {message.author.mention}!\n> Use $help to see a list of commands')
 
     # help command
     elif message.content.lower().startswith('$help'):
@@ -97,10 +126,10 @@ async def on_message(message):
             await message.reply(f'To check if the bot is working, use $ping')
         elif helpType == 'about':
             await message.reply(embed=get_about())
-
+    
     # Bot status test
-    elif message.content.lower().startswith('$ping'):
-        await message.reply('Pong! I am alive.')
+    # elif message.content.lower().startswith('$ping'):
+    #     await message.reply('Pong! I am alive.')
 
     # Create a new support  ticket
     elif message.content.lower().startswith('$ticket'):
@@ -125,8 +154,21 @@ async def on_message(message):
             description=str('\n'.join(message.content.split('\n')[2:])),
             colour=colors[randomIndex])
         await channel.send(embed=l_msg)
+    await client.process_commands(message)
 
     # Format of a message in Discord server is: https://discord.com/channels/<server-id>/,channel-id>/<message-id>
+
+
+'''
+async def kick(ctx, member: discord.Member):
+    try:
+        await member.kick(reason=None)
+        # simple kick command to demonstrate how to get and use member mentions
+        await ctx.send("kicked "+member.mention)
+    except:
+        await ctx.send("bot does not have the kick members permission!")
+'''
+
 
 '''
     Run the bot

@@ -17,7 +17,9 @@ def get_about() -> discord.Embed:
     randomIndex = randint(
         0, len(colors) - 1)    # get a random color
     about_msg = discord.Embed(title="This bot is for managing the Discord server of Google Developer Students Club, Indian Institute of Information technoology, Surat.",
-                              url="https://gdsc.community.dev/indian-institute-of-information-technology-surat/", description="To know more about us, visit: https://gdsc.community.dev/indian-institute-of-information-technology-surat/'", colour=colors[randomIndex])
+                              url="https://gdsc.community.dev/indian-institute-of-information-technology-surat/",
+                              description="To know more about us, visit: https://gdsc.community.dev/indian-institute-of-information-technology-surat/'",
+                              colour=colors[randomIndex])
     about_msg.set_author(
         name='GDSC IIIT Surat Bot', icon_url=PROFILE_PIC)
     about_msg.set_thumbnail(
