@@ -3,6 +3,7 @@
 # *-* coding: utf-8 *-*
 # Author: @AvanishCodes
 # Email: avanishcodes@gmail.com
+# Deployment Managed by prakash-cr7
 # Date: 2021-27-08
 # Version: 0.1.0
 # Description: A discord bot for Google Developer Students Club, Indian Institute of Information Technology, Surat for managing the Discord server.
@@ -33,8 +34,10 @@ from dotenv import load_dotenv
 load_dotenv()
 my_secret = os.getenv('TOKEN')
 ANNOUNCEMENT_PASSWORD = os.getenv('ANNOUNCEMENT_PASSWORD')
-ANNOUNCEMENT_CHANNEL = os.getenv('ANNOUNCEMENT_CHANNEL')
+ANNOUNCEMENT_CHANNEL = int(os.getenv('ANNOUNCEMENT_CHANNEL'))
+DEVHEAT_ANNOUNCE_CHANNEL = int(os.getenv('DEVHEAT_ANNOUNCEMENT_CHANNEL'))
 AUTHORIZED_MODS = f'post {ANNOUNCEMENT_PASSWORD}'
+DEVHEAT_AUTHORIZED_MODS = f'post {os.getenv("DEVHEAT_ANNOUNCEMENT_PASSWORD")}'
 
 client = discord.Client()
 client = commands.Bot(command_prefix='$')  # put your own prefix here
@@ -64,6 +67,79 @@ async def ping(message):
 async def ping(message):
     # simple command so that when you type "!ping" the bot will respond with "pong!"
     await message.reply(f'Hi {message.author.mention}!\n> Use **$help** to see a list of commands')
+
+@client.command(pass_context=True, name='role')
+async def give_theme_role(message, role_name):
+    '''Assign a new role to the user
+
+    Parameters
+    ----------
+    message : discord.Message
+        The message object that triggered the command.
+    role_name : str
+        The name of the role to assign to the user.
+
+    Returns
+    -------
+    None
+    '''
+
+    print("Hi ", role_name)
+    # DevHeat Server Number: 778169072013017099
+    target_server_id = 778169072013017099
+    target_role_id = int()
+    roles = {
+        'education': 905450394400989184,
+        'health': 905450492417683457,
+        'infra': 905450543139409930,
+        'social': 905450576240844880,
+        'agriculture': 905450642045292584,
+        'fintech': 905450619945508926
+    }
+    member = message.message.author
+    target_role = get(member.guild.roles, id=roles[role_name])
+    await member.add_roles(target_role)
+    await message.channel.send(f'{member.mention} has been given the role {target_role.name}')
+
+    '''
+    if role_name in roles:
+        target_role_id = roles[role_name]
+    else:
+        message.channel.send(f'{role_name} is not a valid role.')
+        return
+    # Assign the role
+    member = message.author
+    await member.add_roles(discord.Role(target_role_id))
+    # Check if the user is already in the role
+    if target_role_id in [role.id for role in member.roles]:
+        await message.channel.send(f'{member.mention} already has the role {role_name}.')
+        return
+    
+    # Check if the user is in the server
+    if member.guild.id != target_server_id:
+        await message.channel.send(f'{member.mention} is not in the server.')
+        return
+    
+    # Check if the role exists
+    role = get(member.guild.roles, id=target_role_id)
+    if role is None:
+        await message.channel.send(f'The role {role_name} does not exist.')
+        return
+    
+    # Assign the role
+    role = discord.utils.get(message.guild.roles, id=target_role_id)
+    await member.add_role(role)
+
+    # if not message.message.channel.is_private:
+    #     await client.say("Private command only")
+    server = await client.get_server(target_server_id)
+    role = discord.utils.get(server.roles, id=target_role_id)
+    member = server.get_member(message.message.author.id)
+    if member:
+        await member.add_roles(member, role)
+    else:
+        await client.say("You are not a member")
+    '''
 
 '''
 @client.command(name='help')
@@ -99,7 +175,7 @@ async def on_message(message):
 
     # Random quote from the list
     elif message.content.startswith('$motivate'):
-        await message.reply(embed=get_quote())
+        await message.reply(get_quote())
 
     # Random joke from the list
     elif message.content.startswith('$joke'):
@@ -155,6 +231,19 @@ async def on_message(message):
             colour=colors[randomIndex])
         await channel.send(embed=l_msg)
     await client.process_commands(message)
+
+    # Designed Separately for DevHeat
+    if message.content.startswith(f"{DEVHEAT_AUTHORIZED_MODS}"):
+        # channel ID of announcement channel
+        channel = client.get_channel(DEVHEAT_ANNOUNCE_CHANNEL)
+        randomIndex = random.randint(
+            0, len(colors) - 1)    # get a random color
+        l_msg = discord.Embed(  # create embed object
+            title=str(''.join(message.content.split('\n')[1])),
+            description=str('\n'.join(message.content.split('\n')[2:])),
+            colour=colors[randomIndex])
+        await channel.send(embed=l_msg)
+    # await client.process_commands(message)
 
     # Format of a message in Discord server is: https://discord.com/channels/<server-id>/,channel-id>/<message-id>
 

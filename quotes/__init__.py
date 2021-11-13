@@ -1,3 +1,4 @@
+
 '''
     Module to handle quote requests
 '''
