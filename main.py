@@ -3,6 +3,7 @@
 # *-* coding: utf-8 *-*
 # Author: @AvanishCodes
 # Email: avanishcodes@gmail.com
+# Deployment Managed by prakash-cr7
 # Date: 2021-27-08
 # Version: 0.1.0
 # Description: A discord bot for Google Developer Students Club, Indian Institute of Information Technology, Surat for managing the Discord server.
